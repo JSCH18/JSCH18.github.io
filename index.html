@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSCH18 | GitHub Portfolio & Hub</title>
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================
+           VARIABLES & PALETA DE COLORES NEÓN/VIBRANTE
+           ========================================== */
+        :root {
+            --bg-dark: #0a0a12;
+            --bg-card: rgba(18, 18, 32, 0.75);
+            --bg-card-hover: rgba(28, 28, 50, 0.9);
+            
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff007f;
+            --neon-purple: #9d00ff;
+            --neon-yellow: #ffe600;
+            --neon-green: #00ff66;
+
+            --text-main: #f0f3f9;
+            --text-muted: #a0a5c0;
+            --border-glow: rgba(0, 243, 255, 0.3);
+
+            --font-main: 'Outfit', sans-serif;
+            --font-code: 'Fira Code', monospace;
+        }
+
+        /* RESET & BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(157, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 60%, rgba(0, 243, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(255, 0, 127, 0.1) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* EFECTO DE LÍNEAS DE GRID EN EL FONDO */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* NAVEGACIÓN */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 8%;
+            background: rgba(10, 10, 18, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-decoration: none;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 8px var(--neon-cyan);
+        }
+
+        .btn-gh {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            color: #fff;
+            padding: 0.6rem 1.4rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gh:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.8);
+        }
+
+        /* HEROS & FORMULARIO INTERACTIVO DE BIENVENIDA */
+        .hero-container {
+            min-height: 100vh;
+            padding: 8rem 8% 4rem;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3.8rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .badge-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 2.5rem;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: var(--font-code);
+            color: var(--neon-cyan);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* TARJETA INTERACTIVA DEL FORMULARIO HERO */
+        .hero-form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            padding: 2.2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 243, 255, 0.1);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-form-card::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+            border-radius: 26px;
+            z-index: -1;
+            opacity: 0.4;
+            filter: blur(8px);
+        }
+
+        .form-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.8rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: rgba(0, 243, 255, 0.15);
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 12px rgba(255, 0, 127, 0.4);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.95;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
+        }
+
+        /* SECCIÓN FILTROS Y PROYECTOS */
+        .projects-section {
+            padding: 6rem 8%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* BOTONES DE FILTRADO */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 3rem;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--neon-purple);
+            border-color: var(--neon-pink);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(157, 0, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* GRID DE PROYECTOS */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.25);
+        }
+
+        .project-header-img {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
+        }
+
+        .project-header-img::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, var(--bg-dark), transparent);
+        }
+
+        .project-category {
+            position: relative;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--neon-yellow);
+            color: var(--neon-yellow);
+            padding: 0.2rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .project-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 0.6rem;
+            color: #fff;
+        }
+
+        .project-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+            flex-grow: 1;
+        }
+
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-tag {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            background: rgba(0, 243, 255, 0.08);
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+        }
+
+        .project-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-card {
+            flex: 1;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-card-primary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-card-primary:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        /* ESTATS / TECNOLOGÍAS */
+        .stats-section {
+            padding: 4rem 8%;
+            background: rgba(15, 15, 28, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-box h3 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--neon-pink);
+            text-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+        }
+
+        .stat-box p {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        /* NOTIFICACIÓN / POPUP */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--neon-green);
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 3rem 8%;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        footer a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 992px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                padding-top: 7rem;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 2.8rem;
+            }
+
+            .hero-text p {
+                margin: 0 auto 2rem;
+            }
+
+            .badge-bar {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 1rem 5%;
+            }
+
+            .nav-links {
+                display: none; /* Simplificación para móviles */
+            }
+
+            .hero-text h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero-form-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV BAR -->
+    <nav>
+        <a href="https://github.com/JSCH18" target="_blank" class="logo">
+            <i class="fa-brands fa-github"></i> JSCH<span>18</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#welcome">Inicio</a></li>
+            <li><a href="#projects">Proyectos</a></li>
+            <li><a href="#stats">Métricas</a></li>
+        </ul>
+        <a href="https://github.com/JSCH18" target="_blank" class="btn-gh">
+            <i class="fa-brands fa-github"></i> Perfil GitHub
+        </a>
+    </nav>
+
+    <!-- HERO / SECCIÓN DE BIENVENIDA -->
+    <section class="hero-container" id="welcome">
+        <div class="hero-text">
+            <div class="badge-bar">
+                <span class="badge"><i class="fa-solid fa-code"></i> Developer Hub</span>
+                <span class="badge"><i class="fa-solid fa-bolt"></i> GitHub Pages Live</span>
+            </div>
+            <h1>Bienvenido al Hub de <span class="gradient-text">JSCH18</span></h1>
+            <p>Explora mis proyectos de desarrollo de software, herramientas web, repositorios y recursos interactivos. Diseñado para rendimiento y estilo visual de alto impacto.</p>
+        </div>
+
+        <!-- FORMULARIO INTERACTIVO DINÁMICO -->
+        <div class="hero-form-card">
+            <div class="form-tabs">
+                <button class="tab-btn active" onclick="switchTab('filter')"><i class="fa-solid fa-filter"></i> Explorar</button>
+                <button class="tab-btn" onclick="switchTab('contact')"><i class="fa-solid fa-paper-plane"></i> Contactar</button>
+            </div>
+
+            <!-- TAB 1: FILTRADO RÁPIDO -->
+            <form id="form-filter" onsubmit="handleFilterSubmit(event)">
+                <div class="form-group">
+                    <label for="search-input"><i class="fa-solid fa-magnifying-glass"></i> Buscar Proyecto</label>
+                    <input type="text" id="search-input" class="form-control" placeholder="Ej: React, Bot, Python, Web..." onkeyup="filterProjectsByInput()">
+                </div>
+                <div class="form-group">
+                    <label for="category-select"><i class="fa-solid fa-layer-group"></i> Categoría Principal</label>
+                    <select id="category-select" class="form-control" onchange="filterProjectsByCategory()">
+                        <option value="all">Todas las categorías</option>
+                        <option value="frontend">Frontend & Web</option>
+                        <option value="backend">Backend & APIs</option>
+                        <option value="tools">Herramientas & Scripts</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-rocket"></i> Ver Resultados
+                </button>
+            </form>
+
+            <!-- TAB 2: CONTACTO SIMULADO -->
+            <form id="form-contact" style="display: none;" onsubmit="handleContactSubmit(event)">
+                <div class="form-group">
+                    <label for="visitor-name">Tu Nombre / GitHub User</label>
+                    <input type="text" id="visitor-name" class="form-control" placeholder="@usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="visitor-msg">Mensaje / Consulta</label>
+                    <textarea id="visitor-msg" class="form-control" rows="3" placeholder="Hola JSCH18, vi tus proyectos..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit" style="background: linear-gradient(90deg, var(--neon-pink), var(--neon-yellow)); color: #000;">
+                    <i class="fa-solid fa-paper-plane"></i> Enviar Saludo
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ESTADÍSTICAS RÁPIDAS -->
+    <section class="stats-section" id="stats">
+        <div class="stat-box">
+            <h3 id="stat-count">10+</h3>
+            <p>Repositorios</p>
+        </div>
+        <div class="stat-box">
+            <h3 style="color: var(--neon-cyan);">100%</h3>
+            <p>Código Libre</p>
+        </div>
+        <div class="stat-box">
+            <h3 style="color: var(--neon-yellow);">2026</h3>
+            <p>Ready Build</p>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE PROYECTOS / PORTAFOLIO -->
+    <section class="projects-section" id="projects">
+        <div class="section-header">
+            <h2>Proyectos <span class="gradient-text">Destacados</span></h2>
+            <p>Una selección de repositorios y desarrollos hospedados en el perfil JSCH18</p>
+        </div>
+
+        <!-- BOTONES DE FILTRO -->
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="setActiveFilter(this, 'all')">Todos</button>
+            <button class="filter-btn" onclick="setActiveFilter(this, 'frontend')">Frontend</button>
+            <button class="filter-btn" onclick="setActiveFilter(this, 'backend')">Backend</button>
+            <button class="filter-btn" onclick="setActiveFilter(this, 'tools')">Herramientas</button>
+        </div>
+
+        <!-- GRID DE TARJETAS -->
+        <div class="projects-grid" id="projects-grid">
+            <!-- Los proyectos se cargan dinámicamente mediante JavaScript -->
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Portafolio de Bienvenida - Repositorio <a href="https://github.com/JSCH18" target="_blank">JSCH18</a>. Creado con un solo archivo HTML/CSS/JS puro.</p>
+    </footer>
+
+    <!-- TOAST DE NOTIFICACIÓN -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-circle-check" style="color: var(--neon-green); font-size: 1.5rem;"></i>
+        <span id="toast-message">Acción realizada con éxito</span>
+    </div>
+
+    <!-- JAVASCRIPT EMBEBIDO (SIN DEPENDENCIAS EXTERNAS) -->
+    <script>
+        // DATOS DE PROYECTOS
+        const projectsData = [
+            {
+                id: 1,
+                title: "Plataforma Web Interactiva",
+                category: "frontend",
+                desc: "Aplicación web moderna y dinámica desarrollada con diseño responsivo, temas oscuros y animaciones fluidas.",
+                tags: ["HTML5", "CSS3", "JavaScript"],
+                bgGradient: "linear-gradient(135deg, #00f3ff22, #9d00ff44)",
+                repoUrl: "https://github.com/JSCH18"
+            },
+            {
+                id: 2,
+                title: "API REST & Backend Services",
+                category: "backend",
+                desc: "Servicios backend optimizados para la gestión de datos, autenticación y comunicación de microservicios.",
+                tags: ["Node.js", "Express", "Database"],
+                bgGradient: "linear-gradient(135deg, #ff007f22, #ffe60044)",
+                repoUrl: "https://github.com/JSCH18"
+            },
+            {
+                id: 3,
+                title: "Automation & Scripting Utilities",
+                category: "tools",
+                desc: "Colección de scripts y herramientas para automatización de tareas de desarrollo y flujo de trabajo.",
+                tags: ["Python", "Bash", "Automation"],
+                bgGradient: "linear-gradient(135deg, #00ff6622, #00f3ff44)",
+                repoUrl: "https://github.com/JSCH18"
+            },
+            {
+                id: 4,
+                title: "Dashboard de Visualización",
+                category: "frontend",
+                desc: "Panel de control con métricas en tiempo real, gráficos interactivos y modo neón personalizado.",
+                tags: ["JS", "Charts", "UI/UX"],
+                bgGradient: "linear-gradient(135deg, #9d00ff22, #ff007f44)",
+                repoUrl: "https://github.com/JSCH18"
+            },
+            {
+                id: 5,
+                title: "Componentes UI Reutilizables",
+                category: "frontend",
+                desc: "Biblioteca de componentes de interfaz con efectos neón, accesibles y altamente personalizables.",
+                tags: ["CSS Moderno", "Components"],
+                bgGradient: "linear-gradient(135deg, #ffe60022, #00ff6644)",
+                repoUrl: "https://github.com/JSCH18"
+            },
+            {
+                id: 6,
+                title: "DevTools & Templates",
+                category: "tools",
+                desc: "Plantillas de inicio rápido para proyectos web y configuraciones listas para producción.",
+                tags: ["Templates", "DevTools"],
+                bgGradient: "linear-gradient(135deg, #00f3ff22, #ff007f44)",
+                repoUrl: "https://github.com/JSCH18"
+            }
+        ];
+
+        let currentCategory = 'all';
+
+        // CARGA INICIAL DE PROYECTOS
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProjects(projectsData);
+        });
+
+        // RENDERIZAR TARJETAS DE PROYECTOS
+        function renderProjects(items) {
+            const grid = document.getElementById('projects-grid');
+            grid.innerHTML = '';
+
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--neon-pink);"></i>
+                        <p>No se encontraron proyectos con ese criterio.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `
+                    <div class="project-header-img" style="background: ${item.bgGradient};">
+                        <span class="project-category">${item.category}</span>
+                    </div>
+                    <div class="project-body">
+                        <h3 class="project-title">${item.title}</h3>
+                        <p class="project-desc">${item.desc}</p>
+                        <div class="project-tags">
+                            ${item.tags.map(t => `<span class="project-tag">#${t}</span>`).join('')}
+                        </div>
+                        <div class="project-footer">
+                            <a href="${item.repoUrl}" target="_blank" class="btn-card btn-card-primary">
+                                <i class="fa-brands fa-github"></i> Ver Código
+                            </a>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // CAMBIO DE TABS EN EL HERO
+        function switchTab(tabName) {
+            const btnFilter = document.querySelectorAll('.tab-btn')[0];
+            const btnContact = document.querySelectorAll('.tab-btn')[1];
+            const formFilter = document.getElementById('form-filter');
+            const formContact = document.getElementById('form-contact');
+
+            if (tabName === 'filter') {
+                btnFilter.classList.add('active');
+                btnContact.classList.remove('active');
+                formFilter.style.display = 'block';
+                formContact.style.display = 'none';
+            } else {
+                btnContact.classList.add('active');
+                btnFilter.classList.remove('active');
+                formContact.style.display = 'block';
+                formFilter.style.display = 'none';
+            }
+        }
+
+        // FILTRADO POR TEXTO
+        function filterProjectsByInput() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = projectsData.filter(p => {
+                const matchesCategory = currentCategory === 'all' || p.category === currentCategory;
+                const matchesText = p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query) || p.tags.some(t => t.toLowerCase().includes(query));
+                return matchesCategory && matchesText;
+            });
+            renderProjects(filtered);
+        }
+
+        // FILTRADO POR SELECTOR
+        function filterProjectsByCategory() {
+            currentCategory = document.getElementById('category-select').value;
+            filterProjectsByInput();
+        }
+
+        // FILTRADO POR BOTONES
+        function setActiveFilter(btn, category) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentCategory = category;
+            document.getElementById('category-select').value = category;
+            filterProjectsByInput();
+        }
+
+        // MANEJO DE FORMULARIO DE FILTRO
+        function handleFilterSubmit(e) {
+            e.preventDefault();
+            document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+            showToast("Proyectos filtrados correctamente");
+        }
+
+        // MANEJO DE FORMULARIO DE CONTACTO
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('visitor-name').value;
+            showToast(`¡Gracias ${name}! Mensaje recibido.`);
+            document.getElementById('form-contact').reset();
+        }
+
+        // MOSTRAR TOAST DE NOTIFICACIÓN
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
